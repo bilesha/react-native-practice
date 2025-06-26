@@ -1,7 +1,6 @@
 import ClerkAndConvexProviders from "@/providers/ClerkAndConvexProviders";
 import { Stack } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import InitialLayout from "@/components/initialLayout";
 
 export default function RootLayout() {
   return (
