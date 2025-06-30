@@ -28,7 +28,7 @@ export default defineSchema({
     userId: v.id("users"),
     postId: v.id("posts"),
   }).index("by_post", ["postId"])
-  .index("by_user", ["postId"]),
+  .index("by_user", ["userId"]),
 
   comments: defineTable({
     userId: v.id("users"),
