@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
-import { styles } from "../../styles/create.styles";
 import { COLORS } from '@/constants/theme';
-import {useRouter} from 'expo-router'
-import {useUser} from '@clerk/clerk-expo'
-import { Text, Touchable, TouchableOpacity, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native'
+import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { styles } from "../../styles/create.styles";
 
-import {Image} from "expo-image"
-import * as ImagePicker from 'expo-image-picker';  
-import * as FileSystem from 'expo-file-system';
+import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import {api} from "@/convex/_generated/api";
+import * as FileSystem from 'expo-file-system';
+import { Image } from "expo-image";
+import * as ImagePicker from 'expo-image-picker';
 
 export default function CreateScreen() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function CreateScreen() {
     if (!result.canceled) setSelectedImage(result.assets[0].uri);
   };
 
-  const generateUploadUrl = useMutation(api.posts.genmerateUploadUrl)
+  const generateUploadUrl = useMutation(api.posts.generateUploadUrl)
   const createPost = useMutation(api.posts.createPost)
 
   const handleShare = async  () => {
@@ -170,8 +170,4 @@ export default function CreateScreen() {
       </View>
     </KeyboardAvoidingView>
   )
-}
-
-function useMutation(genmerateUploadUrl: any) {
-  throw new Error('Function not implemented.');
 }

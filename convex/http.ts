@@ -1,7 +1,7 @@
-import { httpRouter, HttpRouter } from "convex/server";
+import { httpRouter } from "convex/server";
+import { Webhook } from "svix";
+import { api } from "./_generated/api";
 import { httpAction } from "./_generated/server";
-import {Webhook} from "svix";
-import {api} from "./_generated/api";
 
 const http = httpRouter();
 
@@ -70,3 +70,5 @@ handler: httpAction(async (ctx, request) => {
     return new Response("Webhook proccessed successfully", { status: 200 });
   }),
 });
+
+export default http;
