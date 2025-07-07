@@ -1,35 +1,70 @@
-import { Link } from "expo-router";
-import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
-import { styles } from "../../styles/auth.styles";
-import { useAuth  } from "@clerk/clerk-expo";
+import { Loader } from "@/components/Loader";
+import Post from "@/components/Post";
+import StoriesSection from "@/components/Stories";
+import { COLORS } from "@/constants/theme";
+import { api } from "@/convex/_generated/api";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "convex/react";
+import { useState } from "react";
+import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { styles } from "../../styles/feed.styles";
 
 export default function Index() {
-  const {signOut} = useAuth();
+  const { signOut } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const posts = useQuery(api.posts.getFeedPosts);
+
+  if (posts === undefined) return <Loader />;
+  if (posts.length === 0) return <NoPostsFound />;
+
+  // this does nothing
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
 
   return (
-    <View
-      style={styles.container}>
-      <Text style={styles.title}>Hell on earth</Text>
+    <View style={styles.container}>
+      {/* HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>spotlight</Text>
+        <TouchableOpacity onPress={() => signOut()}>
+          <Ionicons name="log-out-outline" size={24} color={COLORS.white} />
+        </TouchableOpacity>
+      </View>
 
-      <Link href={"/notifications"}> Feed screen in tabs</Link>
-      <Image
-        source={{uri: "https://www.oxleynursery.com.au/wp-content/uploads/2018/03/nepenthes-003.jpg"}}
-        style={{width: 200, height: 200, resizeMode: "cover", marginBottom: 20}}
-        accessibilityLabel="App Icon" // Add a descriptive label
-        
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => <Post post={item} />}
+        keyExtractor={(item) => item._id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        ListHeaderComponent={<StoriesSection />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.primary}
+          />
+        }
       />
-      <TouchableOpacity onPress={() => signOut()}>
-        <Text style={{ color: "white"}}>Sign out</Text>
-      </TouchableOpacity> 
-      <TouchableOpacity onPress={() => alert("you touched")}>
-        <Text>Press me</Text>
-      </TouchableOpacity>
-        
-      <Pressable
-        onPress={() => alert("you touched")}>
-        <Text>Press me - pressable</Text>
-      </Pressable>
     </View>
   );
 }
 
+const NoPostsFound = () => (
+  <View
+    style={{
+      flex: 1,
+      backgroundColor: COLORS.background,
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <Text style={{ fontSize: 20, color: COLORS.primary }}>No posts yet</Text>
+  </View>
+);
