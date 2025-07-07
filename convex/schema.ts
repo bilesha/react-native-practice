@@ -22,14 +22,18 @@ export default defineSchema({
     caption: v.optional(v.string()),
     likes: v.number(),
     comments: v.number(),
-    imageUrl: v.string(),  
-  }).index("by_user", ["userId"]),
+    imageUrl: v.string(),
+    createdAt: v.number()  
+  }).index("by_user", ["userId"])
+  .index("by_user_and_post", ["userId", "createdAt"]),
 
   likes: defineTable({
     userId: v.id("users"),
     postId: v.id("posts"),
+    createdAt: v.number(),
   }).index("by_post", ["postId"])
-  .index("by_user", ["userId"]),
+  .index("by_user", ["userId"])
+  .index("by_user_and_post", ["userId", "postId"]),
 
   comments: defineTable({
     userId: v.id("users"),
